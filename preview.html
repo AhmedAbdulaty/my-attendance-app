@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>نظام تسجيل الحضور</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      text-align: center;
+    }
+
+    .box {
+      background: white;
+      color: black;
+      padding: 20px;
+      margin: 40px auto;
+      width: 350px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+
+    input {
+      padding: 10px;
+      width: 80%;
+      margin: 5px;
+    }
+
+    button {
+      padding: 10px;
+      margin: 5px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .add { background: green; color: white; }
+    .clear { background: red; color: white; }
+    .delete { background: crimson; color: white; }
+
+    ul {
+      text-align: right;
+      padding: 0;
+      list-style: none;
+    }
+
+    li {
+      background: #f1f1f1;
+      margin: 5px;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    small {
+      display: block;
+      color: gray;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h2>📋 تسجيل الحضور</h2>
+
+    <input type="text" id="name" placeholder="اكتب اسمك">
+    <br>
+    <button class="add" onclick="addName()">تسجيل</button>
+    <button class="clear" onclick="clearAll()">مسح الكل</button>
+
+    <br>
+    <input type="text" id="search" placeholder="🔍 بحث..." onkeyup="showNames()">
+
+    <h3>الحضور:</h3>
+    <ul id="list"></ul>
+  </div>
+
+  <script>
+    let names = JSON.parse(localStorage.getItem("names")) || [];
+
+    function getTime() {
+      let now = new Date();
+      return now.toLocaleString("ar-EG");
+    }
+
+    function showNames() {
+      let list = document.getElementById("list");
+      let search = document.getElementById("search").value.toLowerCase();
+
+      list.innerHTML = "";
+
+      names
+        .filter(n => n.name.toLowerCase().includes(search))
+        .forEach((n, index) => {
+          let li = document.createElement("li");
+
+          li.innerHTML = `
+            <div>
+              ${n.name}
+              <small>${n.time}</small>
+            </div>
+            <button class="delete" onclick="deleteName(${index})">❌</button>
+          `;
+
+          list.appendChild(li);
+        });
+    }
+
+    function addName() {
+      let nameInput = document.getElementById("name");
+      let name = nameInput.value.trim();
+
+      if (name === "") return;
+
+      names.push({
+        name: name,
+        time: getTime()
+      });
+
+      localStorage.setItem("names", JSON.stringify(names));
+
+      nameInput.value = "";
+      showNames();
+    }
+
+    function deleteName(index) {
+      names.splice(index, 1);
+      localStorage.setItem("names", JSON.stringify(names));
+      showNames();
+    }
+
+    function clearAll() {
+      if (confirm("متأكد تمسح الكل؟")) {
+        names = [];
+        localStorage.setItem("names", JSON.stringify(names));
+        showNames();
+      }
+    }
+
+    showNames();
+  </script>
+
+</body>
+</html>
