@@ -5,19 +5,6 @@
   <title>نظام تسجيل الحضور</title>
 
   <style>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyAv5tn5MpzvwSi8aRZNdb39XawpFTBMKXI",
-    authDomain: "attendance-app-4860b.firebaseapp.com",
-    projectId: "attendance-app-4860b",
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-</script>
     body {
       font-family: Arial;
       background: linear-gradient(135deg, #1e3c72, #2a5298);
@@ -32,7 +19,6 @@
       margin: 40px auto;
       width: 350px;
       border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
     }
 
     input {
@@ -51,12 +37,10 @@
 
     .add { background: green; color: white; }
     .clear { background: red; color: white; }
-    .delete { background: crimson; color: white; }
 
     ul {
-      text-align: right;
-      padding: 0;
       list-style: none;
+      padding: 0;
     }
 
     li {
@@ -64,15 +48,7 @@
       margin: 5px;
       padding: 10px;
       border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    small {
-      display: block;
-      color: gray;
-      font-size: 12px;
+      color: black;
     }
   </style>
 </head>
@@ -85,190 +61,61 @@
     <input type="text" id="name" placeholder="اكتب اسمك">
     <br>
     <button class="add" onclick="addName()">تسجيل</button>
-    <button class="clear" onclick="clearAll()">مسح الكل</button>
-
-    <br>
-    <input type="text" id="search" placeholder="🔍 بحث..." onkeyup="showNames()">
 
     <h3>الحضور:</h3>
     <ul id="list"></ul>
   </div>
 
-  <script>
-    let names = JSON.parse(localStorage.getItem("names")) || [];
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-    function getTime() {
-      let now = new Date();
-      return now.toLocaleString("ar-EG");
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAv5tn5MpzvwSi8aRZNdb39XawpFTBMKXI",
+      authDomain: "attendance-app-4860b.firebaseapp.com",
+      projectId: "attendance-app-4860b",
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function addName() {
+      let name = document.getElementById("name").value;
+      if (!name) return;
+
+      db.collection("attendance").add({
+        name: name,
+        time: new Date().toLocaleString()
+      });
+
+      document.getElementById("name").value = "";
     }
 
     function showNames() {
       let list = document.getElementById("list");
-      let search = document.getElementById("search").value.toLowerCase();
 
-      list.innerHTML = "";
+      db.collection("attendance")
+        .orderBy("time", "desc")
+        .onSnapshot((snapshot) => {
+          list.innerHTML = "";
 
-      names
-        .filter(n => n.name.toLowerCase().includes(search))
-        .forEach((n, index) => {
-          let li = document.createElement("li");
+          snapshot.forEach((doc) => {
+            let data = doc.data();
 
-          li.innerHTML = `
-            <div>
-              ${n.name}
-              <small>${n.time}</small>
-            </div>
-            <button class="delete" onclick="deleteName(${index})">❌</button>
-          `;
+            let li = document.createElement("li");
+            li.innerHTML = `
+              ${data.name}
+              <br><small>${data.time}</small>
+            `;
 
-          list.appendChild(li);
+            list.appendChild(li);
+          });
         });
     }
 
-    function addName() {
-      let nameInput = document.getElementById("name");
-      let name = nameInput.value.trim();
+    showNames();
+  </script>
 
-      if (name === "") return;
-
-      names.push({
-        name: name,
-        time: getTime()
-      });
-
-      <script>
-  // إضافة اسم
-  function addName() {
-    let name = document.getElementById("name").value;
-
-    if (name === "") return;
-
-    db.collection("attendance").add({
-      name: name,
-      time: new Date().toLocaleString()
-    });
-
-    document.getElementById("name").value = "";
-  }
-
-  // عرض البيانات
-  function showNames() {
-    let list = document.getElementById("list");
-
-    db.collection("attendance")
-      .orderBy("time", "desc")
-      .onSnapshot((snapshot) => {
-        list.innerHTML = "";
-
-        snapshot.forEach((doc) => {
-          let data = doc.data();
-
-          let li = document.createElement("li");
-          li.innerHTML = `
-            ${data.name}
-            <br><small>${data.time}</small>
-          `;
-
-          list.appendChild(li);
-        });
-      });
-  }
-
-  showNames();
-</script>
-
-      nameInput.value = "";
-      showNames();
-    }
-
-    function deleteName(index) {
-      names.splice(index, 1);
-     <script>
-  // إضافة اسم
-  function addName() {
-    let name = document.getElementById("name").value;
-
-    if (name === "") return;
-
-    db.collection("attendance").add({
-      name: name,
-      time: new Date().toLocaleString()
-    });
-
-    document.getElementById("name").value = "";
-  }
-
-  // عرض البيانات
-  function showNames() {
-    let list = document.getElementById("list");
-
-    db.collection("attendance")
-      .orderBy("time", "desc")
-      .onSnapshot((snapshot) => {
-        list.innerHTML = "";
-
-        snapshot.forEach((doc) => {
-          let data = doc.data();
-
-          let li = document.createElement("li");
-          li.innerHTML = `
-            ${data.name}
-            <br><small>${data.time}</small>
-          `;
-
-          list.appendChild(li);
-        });
-      });
-  }
-
-  showNames();
-</script>
-    }
-
-    function clearAll() {
-      if (confirm("متأكد تمسح الكل؟")) {
-        names = [];
-        <script>
-  // إضافة اسم
-  function addName() {
-    let name = document.getElementById("name").value;
-
-    if (name === "") return;
-
-    db.collection("attendance").add({
-      name: name,
-      time: new Date().toLocaleString()
-    });
-
-    document.getElementById("name").value = "";
-  }
-
-  // عرض البيانات
-  function showNames() {
-    let list = document.getElementById("list");
-
-    db.collection("attendance")
-      .orderBy("time", "desc")
-      .onSnapshot((snapshot) => {
-        list.innerHTML = "";
-
-        snapshot.forEach((doc) => {
-          let data = doc.data();
-
-          let li = document.createElement("li");
-          li.innerHTML = `
-            ${data.name}
-            <br><small>${data.time}</small>
-          `;
-
-          list.appendChild(li);
-        });
-      });
-  }
-
-  showNames();
-</script>
-      }
-    }
 </body>
 </html>
