@@ -36,7 +36,6 @@
     }
 
     .add { background: green; color: white; }
-    .clear { background: red; color: white; }
 
     ul {
       list-style: none;
@@ -55,7 +54,18 @@
 
 <body>
 
-  <div class="box">
+  <!-- 🔐 Login -->
+  <div id="loginBox" class="box">
+    <h2>🔐 تسجيل الدخول</h2>
+
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="login()">دخول</button>
+  </div>
+
+  <!-- 📋 App -->
+  <div id="appBox" class="box" style="display:none;">
     <h2>📋 تسجيل الحضور</h2>
 
     <input type="text" id="name" placeholder="اكتب اسمك">
@@ -69,6 +79,7 @@
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
   <script>
     const firebaseConfig = {
@@ -80,6 +91,35 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    // 🔐 Login
+    function login() {
+      let email = document.getElementById("email").value;
+      let password = document.getElementById("password").value;
+
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          let user = userCredential.user;
+          let uid = user.uid;
+
+          db.collection("users").doc(uid).get().then((doc) => {
+            if (doc.exists && doc.data().isAdmin) {
+              alert("👑 انت Admin");
+
+              document.getElementById("loginBox").style.display = "none";
+              document.getElementById("appBox").style.display = "block";
+
+              showNames();
+            } else {
+              alert("❌ انت مش Admin");
+            }
+          });
+        })
+        .catch(() => {
+          alert("بيانات غلط ❌");
+        });
+    }
+
+    // 📋 إضافة اسم
     function addName() {
       let name = document.getElementById("name").value;
       if (!name) return;
@@ -92,6 +132,7 @@
       document.getElementById("name").value = "";
     }
 
+    // 📋 عرض البيانات
     function showNames() {
       let list = document.getElementById("list");
 
@@ -113,8 +154,6 @@
           });
         });
     }
-
-    showNames();
   </script>
 
 </body>
