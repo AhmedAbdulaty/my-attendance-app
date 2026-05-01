@@ -136,7 +136,46 @@
         time: getTime()
       });
 
-      localStorage.setItem("names", JSON.stringify(names));
+      <script>
+  // إضافة اسم
+  function addName() {
+    let name = document.getElementById("name").value;
+
+    if (name === "") return;
+
+    db.collection("attendance").add({
+      name: name,
+      time: new Date().toLocaleString()
+    });
+
+    document.getElementById("name").value = "";
+  }
+
+  // عرض البيانات
+  function showNames() {
+    let list = document.getElementById("list");
+
+    db.collection("attendance")
+      .orderBy("time", "desc")
+      .onSnapshot((snapshot) => {
+        list.innerHTML = "";
+
+        snapshot.forEach((doc) => {
+          let data = doc.data();
+
+          let li = document.createElement("li");
+          li.innerHTML = `
+            ${data.name}
+            <br><small>${data.time}</small>
+          `;
+
+          list.appendChild(li);
+        });
+      });
+  }
+
+  showNames();
+</script>
 
       nameInput.value = "";
       showNames();
@@ -144,20 +183,92 @@
 
     function deleteName(index) {
       names.splice(index, 1);
-      localStorage.setItem("names", JSON.stringify(names));
-      showNames();
+     <script>
+  // إضافة اسم
+  function addName() {
+    let name = document.getElementById("name").value;
+
+    if (name === "") return;
+
+    db.collection("attendance").add({
+      name: name,
+      time: new Date().toLocaleString()
+    });
+
+    document.getElementById("name").value = "";
+  }
+
+  // عرض البيانات
+  function showNames() {
+    let list = document.getElementById("list");
+
+    db.collection("attendance")
+      .orderBy("time", "desc")
+      .onSnapshot((snapshot) => {
+        list.innerHTML = "";
+
+        snapshot.forEach((doc) => {
+          let data = doc.data();
+
+          let li = document.createElement("li");
+          li.innerHTML = `
+            ${data.name}
+            <br><small>${data.time}</small>
+          `;
+
+          list.appendChild(li);
+        });
+      });
+  }
+
+  showNames();
+</script>
     }
 
     function clearAll() {
       if (confirm("متأكد تمسح الكل؟")) {
         names = [];
-        localStorage.setItem("names", JSON.stringify(names));
-        showNames();
+        <script>
+  // إضافة اسم
+  function addName() {
+    let name = document.getElementById("name").value;
+
+    if (name === "") return;
+
+    db.collection("attendance").add({
+      name: name,
+      time: new Date().toLocaleString()
+    });
+
+    document.getElementById("name").value = "";
+  }
+
+  // عرض البيانات
+  function showNames() {
+    let list = document.getElementById("list");
+
+    db.collection("attendance")
+      .orderBy("time", "desc")
+      .onSnapshot((snapshot) => {
+        list.innerHTML = "";
+
+        snapshot.forEach((doc) => {
+          let data = doc.data();
+
+          let li = document.createElement("li");
+          li.innerHTML = `
+            ${data.name}
+            <br><small>${data.time}</small>
+          `;
+
+          list.appendChild(li);
+        });
+      });
+  }
+
+  showNames();
+</script>
       }
     }
-
-    showNames();
-  </script>
-
 </body>
 </html>
