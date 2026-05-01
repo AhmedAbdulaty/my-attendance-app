@@ -5,6 +5,19 @@
   <title>نظام تسجيل الحضور</title>
 
   <style>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAv5tn5MpzvwSi8aRZNdb39XawpFTBMKXI",
+    authDomain: "attendance-app-4860b.firebaseapp.com",
+    projectId: "attendance-app-4860b",
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
     body {
       font-family: Arial;
       background: linear-gradient(135deg, #1e3c72, #2a5298);
